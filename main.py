@@ -12,11 +12,6 @@ from Cocoa import *
 AIRPORT_CONNECTED = 1
 AIRPORT_KEY_PATTERN = "State:/Network/Interface/{}/AirPort"
 IP_KEY = "State:/Network/Global/IPv4"
-CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".networkautologin.js")
-EXAMPLE_CONFIG_PATH = "resources/config.js"
-CASPERJS_BIN_PATH = "resources/casperjs/bin/casperjs"
-PHANTOMJS_BIN_PATH = "resources/phantomjs"
-PATH_ENV = os.environ.get("PATH")
 
 EXIT_LOGGED_IN = 1
 EXIT_ALREADY_LOGGED_IN = 2
@@ -44,7 +39,7 @@ def check_update(dynStore):
     BSSID = airport_status.get('BSSID')
     power_status = airport_status.get('Power Status', 0)
 
-    if power_status == AIRPORT_CONNECTED:
+    if power_status == AIRPORT_CONNECTED and SSID == SSID_TO_LOGIN:
         if BSSID and BSSID != old_BSSID:
             result = EXIT_TIMEOUT
             for _ in range(20):
@@ -90,7 +85,7 @@ def callback(dynStore, changedKeys, info):
             break
 
 def setup_interface_watch():
-    # we don't actually use the context, we just need to provide a python object
+    # Just need to provide a python object
     context = {}
 
     dynStore = SCDynamicStoreCreate(None, "NetworkAutoLogin", callback, context)
@@ -119,6 +114,8 @@ def get_interface_name():
         print(f"Error getting interface name: {e}")
         return "en0"
 
+
+SSID_TO_LOGIN = 'WifiCity'
 
 APPLE_HOTSPOT_URL = 'http://captive.apple.com/hotspot-detect.html'
 
